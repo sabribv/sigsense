@@ -27,7 +27,7 @@ export class AuthenticationService {
         return !!token;
     }
 
-    async login(email, password) {
+    async login(email, password): Promise<void> {
         try {
             const result = await this.loginService.login(email, password).toPromise();
             this.localStorageService.add('token', result.token);

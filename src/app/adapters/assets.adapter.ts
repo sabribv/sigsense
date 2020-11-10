@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { Asset, AssetsList } from '../models/asset';
 import { AssetService } from '../services/api/asset.service';
 import { CompanyService } from '../services/api/company.service';

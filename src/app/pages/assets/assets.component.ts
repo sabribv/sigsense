@@ -40,7 +40,7 @@ export class AssetsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async getAssets(href = null) {
+  async getAssets(href = null): Promise<void> {
     try {
       this.currentStatus = dataStatus.loading;
       this.assetsList = await this.assetsAdapter.getCompanyAssets(this.companyId, href);
