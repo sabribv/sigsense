@@ -1,0 +1,46 @@
+@import '../../../styles';
+
+.title {
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    padding: 30px 25px;
+    width: 100vw;
+}
+
+.container {
+    padding :20px;
+
+    .spinner-container {
+        padding: 50px 0;
+        width: 100%;
+
+        .spinner {
+            margin: 0 auto;
+        }
+    }
+
+    .message {
+        color: $warn;
+        display: inline-flex;
+        line-height: 30px;
+        vertical-align: middle;
+    }
+
+    table {
+        width: 100%;
+
+        .asset-image {
+            width: 100px;
+            height: auto;
+        }
+    }
+
+    .table-footer {
+        display: flex;
+        padding: 15px 0;
+
+        .spacer {
+            flex: 1 1 auto;
+        }
+    }
+}

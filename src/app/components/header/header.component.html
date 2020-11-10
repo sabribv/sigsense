@@ -1,0 +1,33 @@
+<mat-toolbar color="primary">
+    <!-- DASHBOARDS -->
+    <button mat-button [matMenuTriggerFor]="dashboardsMenu">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #dashboardsMenu="matMenu">
+        <button mat-menu-item disabled *ngFor="let dashboard of selectedCompany.dashboards" [value]="dashboard">
+            {{dashboard}}
+        </button>
+    </mat-menu>
+    Companies Assets App
+    <span class="toolbar-spacer"></span>
+
+    <!-- COMPANIES -->
+    <button mat-button [matMenuTriggerFor]="menu">{{selectedCompany.name}}
+        <mat-icon>keyboard_arrow_down</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let company of companies" [value]="company" (click)="onCompanyChange(company)">
+            {{company.name}}
+        </button>
+    </mat-menu>
+    
+    <!-- USER -->
+    <button mat-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="onLogout()">
+            Logout
+        </button>
+    </mat-menu>
+</mat-toolbar>

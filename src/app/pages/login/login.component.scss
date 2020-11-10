@@ -1,0 +1,27 @@
+@import '../../../styles';
+
+:host {
+  .container {
+    background-color: $primary;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 2rem;
+    position: relative;
+    width: 100%;
+    
+    mat-card {
+      left: 50%;
+      margin: 0;
+      min-width: 400px;
+      position: absolute;
+      text-align: center;
+      top: 50%;
+      transform: translate(-50%, -90%);
+
+      mat-form-field {
+        display: block;
+        padding: 0 20px;
+      }
+    }
+  }
+}
