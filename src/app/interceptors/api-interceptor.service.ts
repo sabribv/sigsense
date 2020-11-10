@@ -13,7 +13,7 @@ export class ApiInterceptorService {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let  authRequest = request.clone();
 
-        if (request.url !== environment.endpoints.login.login) {
+        if (request.url !== environment.endpoints.login) {
             const token = this.authenticationService.getToken();
             authRequest = request.clone({
                 setHeaders: {

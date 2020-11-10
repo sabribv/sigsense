@@ -11,7 +11,7 @@ export class LoginService {
     constructor(private http: HttpClient) {}
 
     public login(email, password): Observable<any> {
-        return this.http.put(environment.endpoints.login.login, {
+        return this.http.put(environment.endpoints.login, {
             email,
             password
         });

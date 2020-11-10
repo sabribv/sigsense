@@ -7,9 +7,7 @@ export const environment = {
   production: false,
   endpoints: {
     server,
-    login: {
-        login: `${server}/login`
-    },
+    login: `${server}/login`,
     companies: `${server}/companies`
   }
 };

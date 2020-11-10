@@ -1,10 +1,10 @@
 const server = 'https://dev.sigsense.tech';
 
 export const environment = {
-  production: true,
+  production: false,
   endpoints: {
-      login: {
-          login: `${server}/login`
-      }
+    server,
+    login: `${server}/login`,
+    companies: `${server}/companies`
   }
 };
