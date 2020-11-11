@@ -1,4 +1,4 @@
-import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -7,7 +7,7 @@ import { AuthenticationService } from '../services/authentication.service';
 @Injectable({
     providedIn: 'root'
 })
-export class ApiInterceptorService {
+export class ApiInterceptorService implements HttpInterceptor {
     constructor(private authenticationService: AuthenticationService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

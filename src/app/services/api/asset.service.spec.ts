@@ -47,4 +47,4 @@ describe('AssetService', () => {
         expect(domSanitizerMock.bypassSecurityTrustUrl).toHaveBeenCalledTimes(1);
         expect(domSanitizerMock.bypassSecurityTrustUrl).toHaveBeenCalledWith(createObjectURLResponse);
     });
-})
+});
