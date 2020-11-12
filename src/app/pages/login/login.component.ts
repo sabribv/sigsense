@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.email],
       password: ['', Validators.required]
     });
-
   }
 
   async onSubmit(): Promise<void> {

@@ -13,7 +13,7 @@ export class CompanyBuilderService {
     constructor(private localStorageSerive: LocalStorageService) {
         const metadata = this.localStorageSerive.get('metadata');
         if (metadata) {
-            const companies = metadata ? JSON.parse(atob(metadata)) : [];
+            const companies = JSON.parse(atob(metadata));
             if (!!companies) {
                 this.setAvailableCompanies(companies);
             }

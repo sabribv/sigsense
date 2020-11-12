@@ -40,16 +40,33 @@ describe('CompanyBuilderService', () => {
         });
     });
 
+    it('should not set companies when there are not companies stored in the local storage', () => {
+        // Arrange
+        localStorageServiceMock.get.and.returnValue(undefined);
+
+        // Act
+        service = new CompanyBuilderService(localStorageServiceMock);
+
+        // Assert
+        expect(localStorageServiceMock.get).toHaveBeenCalledTimes(1);
+        expect(localStorageServiceMock.get).toHaveBeenCalledWith('metadata');
+        expect(localStorageServiceMock.add).not.toHaveBeenCalled();
+    });
+
     it('should set the available companies when there is new data to store', (done) => {
         // Arrange
-        const encryptedData = 'W3siaWQiOjIsIm5hbWUiOiJhbm90aGVyIGZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX0seyJpZCI6MSwibmFtZSI6ImZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX1d';
+        const encryptedData = 'W3siaWQiOjIsIm5hbWUiOiJhbm90aGVyIGZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX0seyJpZCI6MSwibmFtZSI6ImZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX0seyJpZCI6MywibmFtZSI6ImZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX0seyJpZCI6NCwibmFtZSI6InlldCBhbm90aGVyIGZha2UgY29tcGFueSIsImRhc2hib2FyZHMiOlsiRmFrZSBkYXNoYm9hcmQiXX1d';
         const companies = [
             { id: 2, name: 'another fake company', dashboards: [ 'Fake dashboard' ] },
-            { id: 1, name: 'fake company', dashboards: [ 'Fake dashboard' ] }
+            { id: 1, name: 'fake company', dashboards: [ 'Fake dashboard' ] },
+            { id: 3, name: 'fake company', dashboards: [ 'Fake dashboard' ] },
+            { id: 4, name: 'yet another fake company', dashboards: [ 'Fake dashboard' ] }
         ];
         const roles = [
             { companyId: 1, companyName: 'fake company', Dashboards: [ 'fake dashboard' ] },
-            { companyId: 2, companyName: 'another fake company', Dashboards: [ 'fake dashboard' ] }
+            { companyId: 3, companyName: 'fake company', Dashboards: [ 'fake dashboard' ] },
+            { companyId: 2, companyName: 'another fake company', Dashboards: [ 'fake dashboard' ] },
+            { companyId: 4, companyName: 'yet another fake company', Dashboards: [ 'fake dashboard' ] }
         ];
         localStorageServiceMock.get.and.returnValue(undefined);
 

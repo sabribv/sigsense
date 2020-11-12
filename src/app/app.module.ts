@@ -27,6 +27,7 @@ import { ApiInterceptorService } from './interceptors/api-interceptor.service';
 import { AssetsAdapter } from './adapters/assets.adapter';
 import { CompanyService } from './services/api/company.service';
 import { AssetService } from './services/api/asset.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { AssetService } from './services/api/asset.service';
     MatMenuModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatFormFieldModule
   ],
   providers: [
     LoginService,

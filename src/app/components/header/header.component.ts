@@ -1,6 +1,5 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Company } from 'src/app/models/company';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CompanyBuilderService } from 'src/app/services/company-builder.service';
 
