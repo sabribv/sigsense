@@ -1,16 +1,15 @@
 import { Observable, of, throwError } from 'rxjs';
-import { AssetsAdapter } from './assets.adapter';
+import { AssetsList } from '../models/asset';
+import { AssetsListBuilder } from './assets-list-builder';
 
 const assetsCollectionResponse = {
-    size: 2,
-    items: [
-        '/assets/1',
-        '/assets/2',
+    totalItems: 2,
+    assets: [
+        { href: '/assets/1' },
+        { href: '/assets/2' }
     ],
-    links: {
-        previous: 'http://fake-previous',
-        next: 'http://fake-next'
-    },
+    previous: 'http://fake-previous',
+    next: 'http://fake-next',
     start: 1,
     limit: 2
 };
@@ -20,13 +19,15 @@ const assetsResponses = [
         name: 'asset1 name',
         description: 'asset1 description',
         manufacturer: 'asset1 manufacturer',
-        href: 'http://asset1'
+        href: '/assets/1',
+        image: jasmine.any(Observable)
     },
     {
         name: 'asset2 name',
         description: 'asset2 description',
         manufacturer: 'asset2 manufacturer',
-        href: 'http://asset2'
+        href: '/assets/2',
+        image: jasmine.any(Observable)
     }
 ];
 
@@ -36,13 +37,15 @@ const expectedResponse = {
             name: 'asset1 name',
             description: 'asset1 description',
             manufacturer: 'asset1 manufacturer',
-            image: jasmine.any(Observable)
+            href: '/assets/1',
+            image: of(jasmine.any(Observable))
         },
         {
             name: 'asset2 name',
             description: 'asset2 description',
             manufacturer: 'asset2 manufacturer',
-            image: jasmine.any(Observable)
+            href: '/assets/2',
+            image: of(jasmine.any(Observable))
         }
     ],
     totalItems: 2,
@@ -50,19 +53,18 @@ const expectedResponse = {
     limit: 2,
     previous: 'http://fake-previous',
     next: 'http://fake-next'
-};
+} as AssetsList;
 
-describe('AssetsAdapter', () => {
-    let adapter: AssetsAdapter;
+describe('AssetsListBuilder', () => {
+    let adapter: AssetsListBuilder;
     const companyServiceMock = jasmine.createSpyObj('CompanyService', ['getAssetsListByRef', 'getAssetsListByCompany']);
-    const assetsServiceMock = jasmine.createSpyObj('AssetService', ['getAsset', 'getAssetImage']);
+    const assetsServiceMock = jasmine.createSpyObj('AssetService', ['getAsset']);
 
     beforeEach(() => {
-        adapter = new AssetsAdapter(companyServiceMock, assetsServiceMock);
+        adapter = new AssetsListBuilder(companyServiceMock, assetsServiceMock);
         companyServiceMock.getAssetsListByRef.calls.reset();
         companyServiceMock.getAssetsListByCompany.calls.reset();
         assetsServiceMock.getAsset.calls.reset();
-        assetsServiceMock.getAssetImage.calls.reset();
     });
 
     it('should return a return a list of assets when company id is provided and href is not', async () => {
@@ -70,10 +72,9 @@ describe('AssetsAdapter', () => {
         const companyId = 1;
         companyServiceMock.getAssetsListByCompany.and.returnValue(of(assetsCollectionResponse));
         assetsServiceMock.getAsset.and.returnValues(of(assetsResponses[0]), of(assetsResponses[1]));
-        assetsServiceMock.getAssetImage.and.returnValue(of(jasmine.any(Observable)));
 
         // Act
-        const response = await adapter.getCompanyAssets(companyId);
+        const response = await adapter.getAssetsList(companyId);
 
         // Assert
         expect(response).toEqual(expectedResponse);
@@ -83,9 +84,6 @@ describe('AssetsAdapter', () => {
         expect(assetsServiceMock.getAsset).toHaveBeenCalledTimes(2);
         expect(assetsServiceMock.getAsset).toHaveBeenCalledWith('/assets/1');
         expect(assetsServiceMock.getAsset).toHaveBeenCalledWith('/assets/2');
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledTimes(2);
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledWith('http://asset1');
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledWith('http://asset2');
     });
 
     it('should return a return a list of assets when company id and href are provided', async () => {
@@ -94,10 +92,9 @@ describe('AssetsAdapter', () => {
         const href = 'http://fakeRef';
         companyServiceMock.getAssetsListByRef.and.returnValue(of(assetsCollectionResponse));
         assetsServiceMock.getAsset.and.returnValues(of(assetsResponses[0]), of(assetsResponses[1]));
-        assetsServiceMock.getAssetImage.and.returnValue(of(jasmine.any(Observable)));
 
         // Act
-        const response = await adapter.getCompanyAssets(companyId, href);
+        const response = await adapter.getAssetsList(companyId, href);
 
         // Assert
         expect(response).toEqual(expectedResponse);
@@ -107,9 +104,6 @@ describe('AssetsAdapter', () => {
         expect(assetsServiceMock.getAsset).toHaveBeenCalledTimes(2);
         expect(assetsServiceMock.getAsset).toHaveBeenCalledWith('/assets/1');
         expect(assetsServiceMock.getAsset).toHaveBeenCalledWith('/assets/2');
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledTimes(2);
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledWith('http://asset1');
-        expect(assetsServiceMock.getAssetImage).toHaveBeenCalledWith('http://asset2');
     });
 
     it('should not return a return a list of assets when api call fails', async () => {
@@ -119,14 +113,13 @@ describe('AssetsAdapter', () => {
 
         try {
             // Act
-            await adapter.getCompanyAssets(companyId);
+            await adapter.getAssetsList(companyId);
         } catch {
             // Assert
             expect(companyServiceMock.getAssetsListByCompany).toHaveBeenCalledTimes(1);
             expect(companyServiceMock.getAssetsListByCompany).toHaveBeenCalledWith(companyId);
             expect(companyServiceMock.getAssetsListByRef).not.toHaveBeenCalled();
             expect(assetsServiceMock.getAsset).not.toHaveBeenCalled();
-            expect(assetsServiceMock.getAssetImage).not.toHaveBeenCalled();
         }
     });
 });

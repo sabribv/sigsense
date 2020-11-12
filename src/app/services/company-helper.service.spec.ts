@@ -1,13 +1,13 @@
 import { take } from 'rxjs/operators';
-import { CompanyBuilderService } from './company-builder.service';
+import { CompanyHelperService } from './company-helper.service';
 
-describe('CompanyBuilderService', () => {
-    let service: CompanyBuilderService;
-    const localStorageServiceMock = jasmine.createSpyObj('LocalStorageService', ['add', 'get']);
+describe('CompanyHelperService', () => {
+    let service: CompanyHelperService;
+    const sessionStorageServiceMock = jasmine.createSpyObj('SessionStorageService', ['add', 'get']);
 
     beforeEach(() => {
-        localStorageServiceMock.add.calls.reset();
-        localStorageServiceMock.get.calls.reset();
+        sessionStorageServiceMock.add.calls.reset();
+        sessionStorageServiceMock.get.calls.reset();
     });
 
     it('should set companies when the service is created and companies are already stored in the local storage', (done) => {
@@ -18,16 +18,16 @@ describe('CompanyBuilderService', () => {
             { id: 1, name: 'fake company', dashboards: [ 'Fake dashboard' ] }
         ];
 
-        localStorageServiceMock.get.and.returnValue(encryptedData);
+        sessionStorageServiceMock.get.and.returnValue(encryptedData);
 
         // Act
-        service = new CompanyBuilderService(localStorageServiceMock);
+        service = new CompanyHelperService(sessionStorageServiceMock);
 
         // Assert
-        expect(localStorageServiceMock.get).toHaveBeenCalledTimes(1);
-        expect(localStorageServiceMock.get).toHaveBeenCalledWith('metadata');
-        expect(localStorageServiceMock.add).toHaveBeenCalledTimes(1);
-        expect(localStorageServiceMock.add).toHaveBeenCalledWith('metadata', encryptedData);
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledTimes(1);
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledWith('metadata');
+        expect(sessionStorageServiceMock.add).toHaveBeenCalledTimes(1);
+        expect(sessionStorageServiceMock.add).toHaveBeenCalledWith('metadata', encryptedData);
 
         service.availableCompanies.pipe(take(1)).subscribe(availableCompanies => {
             expect(availableCompanies).toEqual(companies);
@@ -42,15 +42,15 @@ describe('CompanyBuilderService', () => {
 
     it('should not set companies when there are not companies stored in the local storage', () => {
         // Arrange
-        localStorageServiceMock.get.and.returnValue(undefined);
+        sessionStorageServiceMock.get.and.returnValue(undefined);
 
         // Act
-        service = new CompanyBuilderService(localStorageServiceMock);
+        service = new CompanyHelperService(sessionStorageServiceMock);
 
         // Assert
-        expect(localStorageServiceMock.get).toHaveBeenCalledTimes(1);
-        expect(localStorageServiceMock.get).toHaveBeenCalledWith('metadata');
-        expect(localStorageServiceMock.add).not.toHaveBeenCalled();
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledTimes(1);
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledWith('metadata');
+        expect(sessionStorageServiceMock.add).not.toHaveBeenCalled();
     });
 
     it('should set the available companies when there is new data to store', (done) => {
@@ -62,23 +62,17 @@ describe('CompanyBuilderService', () => {
             { id: 3, name: 'fake company', dashboards: [ 'Fake dashboard' ] },
             { id: 4, name: 'yet another fake company', dashboards: [ 'Fake dashboard' ] }
         ];
-        const roles = [
-            { companyId: 1, companyName: 'fake company', Dashboards: [ 'fake dashboard' ] },
-            { companyId: 3, companyName: 'fake company', Dashboards: [ 'fake dashboard' ] },
-            { companyId: 2, companyName: 'another fake company', Dashboards: [ 'fake dashboard' ] },
-            { companyId: 4, companyName: 'yet another fake company', Dashboards: [ 'fake dashboard' ] }
-        ];
-        localStorageServiceMock.get.and.returnValue(undefined);
+        sessionStorageServiceMock.get.and.returnValue(undefined);
 
         // Act
-        service = new CompanyBuilderService(localStorageServiceMock);
-        service.buildCompanies(roles);
+        service = new CompanyHelperService(sessionStorageServiceMock);
+        service.setCompanies(companies);
 
         // Assert
-        expect(localStorageServiceMock.get).toHaveBeenCalledTimes(1);
-        expect(localStorageServiceMock.get).toHaveBeenCalledWith('metadata');
-        expect(localStorageServiceMock.add).toHaveBeenCalledTimes(1);
-        expect(localStorageServiceMock.add).toHaveBeenCalledWith('metadata', encryptedData);
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledTimes(1);
+        expect(sessionStorageServiceMock.get).toHaveBeenCalledWith('metadata');
+        expect(sessionStorageServiceMock.add).toHaveBeenCalledTimes(1);
+        expect(sessionStorageServiceMock.add).toHaveBeenCalledWith('metadata', encryptedData);
 
         service.availableCompanies.pipe(take(1)).subscribe(availableCompanies => {
             expect(availableCompanies).toEqual(companies);
@@ -94,10 +88,10 @@ describe('CompanyBuilderService', () => {
     it('should set the selected company when a company is selected', (done) => {
         // Arrange
         const company = { id: 1, name: 'fake company', dashboards: [ 'Fake dashboard' ] };
-        localStorageServiceMock.get.and.returnValue(undefined);
+        sessionStorageServiceMock.get.and.returnValue(undefined);
 
         // Act
-        service = new CompanyBuilderService(localStorageServiceMock);
+        service = new CompanyHelperService(sessionStorageServiceMock);
         service.setSelectedCompany(company);
 
         // Assert

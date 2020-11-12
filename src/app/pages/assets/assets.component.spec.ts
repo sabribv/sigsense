@@ -6,9 +6,9 @@ import { MatTable, MatTableModule } from '@angular/material/table';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
-import { AssetsAdapter } from 'src/app/adapters/assets.adapter';
+import { AssetsListBuilder } from 'src/app/services/assets-list-builder';
 import { AssetsList } from 'src/app/models/asset';
-import { CompanyBuilderService } from 'src/app/services/company-builder.service';
+import { CompanyHelperService } from 'src/app/services/company-helper.service';
 import { AssetsComponent } from './assets.component';
 
 const assetsList = {
@@ -30,17 +30,17 @@ const company = { id: 1, name: 'fake company', dashboards: [ 'Fake dashboard' ] 
 describe('AssetsComponent', () => {
   let component: AssetsComponent;
   let fixture: ComponentFixture<AssetsComponent>;
-  const companyBuilderServiceMock = jasmine.createSpyObj('CompanyBuilderService', [],
+  const companyHelperServiceMock = jasmine.createSpyObj('CompanyHelperService', [],
     { ['selectedCompany']: of(company) });
-  const assetsAdapterMock = jasmine.createSpyObj('AssetsAdapter', ['getCompanyAssets']);
+  const assetsListBuilderMock = jasmine.createSpyObj('AssetsListBuilder', ['getAssetsList']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ AssetsComponent ],
       imports: [ BrowserAnimationsModule, MatProgressSpinnerModule, MatIconModule, MatTableModule, MatButtonModule ],
       providers: [
-        { provide: CompanyBuilderService, useValue: companyBuilderServiceMock },
-        { provide: AssetsAdapter, useValue: assetsAdapterMock }
+        { provide: CompanyHelperService, useValue: companyHelperServiceMock },
+        { provide: AssetsListBuilder, useValue: assetsListBuilderMock }
       ]
     })
     .compileComponents();
@@ -50,12 +50,12 @@ describe('AssetsComponent', () => {
     fixture = TestBed.createComponent(AssetsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    assetsAdapterMock.getCompanyAssets.calls.reset();
+    assetsListBuilderMock.getAssetsList.calls.reset();
   });
 
   it('should render the assets components and show a table with assets when there are assets for the company', async () => {
     // Arrange
-    assetsAdapterMock.getCompanyAssets.and.returnValue(Promise.resolve(assetsList));
+    assetsListBuilderMock.getAssetsList.and.returnValue(Promise.resolve(assetsList));
 
     // Act
     component.ngOnInit();
@@ -65,14 +65,14 @@ describe('AssetsComponent', () => {
 
     // Assert
     expect(component).toBeTruthy();
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledTimes(1);
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledWith(company.id, null);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledTimes(1);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledWith(company.id, null);
     expect(table).toBeTruthy();
   });
 
   it('should show a message when there are not assets for the company', async () => {
     // Arrange
-    assetsAdapterMock.getCompanyAssets.and.returnValue(Promise.resolve({ assets: []}));
+    assetsListBuilderMock.getAssetsList.and.returnValue(Promise.resolve({ assets: []}));
 
     // Act
     component.ngOnInit();
@@ -88,7 +88,7 @@ describe('AssetsComponent', () => {
 
   it('should show a message when assets service fails', async () => {
     // Arrange
-    assetsAdapterMock.getCompanyAssets.and.returnValue(Promise.reject());
+    assetsListBuilderMock.getAssetsList.and.returnValue(Promise.reject());
 
     // Act
     component.ngOnInit();
@@ -120,7 +120,7 @@ describe('AssetsComponent', () => {
 
   it('should get the next page of assets when the user click on the next button', async () => {
     // Arrange
-    assetsAdapterMock.getCompanyAssets.and.returnValue(Promise.resolve(assetsList));
+    assetsListBuilderMock.getAssetsList.and.returnValue(Promise.resolve(assetsList));
 
     // Act
     component.ngOnInit();
@@ -132,14 +132,14 @@ describe('AssetsComponent', () => {
 
     // Assert
     expect(component).toBeTruthy();
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledTimes(2);
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledWith(company.id, null);
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledWith(company.id, assetsList.next);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledTimes(2);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledWith(company.id, null);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledWith(company.id, assetsList.next);
   });
 
   it('should get the previous page of assets when the user click on the previous button', async () => {
     // Arrange
-    assetsAdapterMock.getCompanyAssets.and.returnValue(Promise.resolve(assetsList));
+    assetsListBuilderMock.getAssetsList.and.returnValue(Promise.resolve(assetsList));
 
     // Act
     component.ngOnInit();
@@ -151,8 +151,8 @@ describe('AssetsComponent', () => {
 
     // Assert
     expect(component).toBeTruthy();
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledTimes(2);
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledWith(company.id, null);
-    expect(assetsAdapterMock.getCompanyAssets).toHaveBeenCalledWith(company.id, assetsList.previous);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledTimes(2);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledWith(company.id, null);
+    expect(assetsListBuilderMock.getAssetsList).toHaveBeenCalledWith(company.id, assetsList.previous);
   });
 });

@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { CompanyBuilderService } from 'src/app/services/company-builder.service';
+import { CompanyHelperService } from 'src/app/services/company-helper.service';
 import { HeaderComponent } from './header.component';
 
 const companies = [
@@ -19,7 +19,7 @@ describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   const authenticationServiceMock = jasmine.createSpyObj('AuthenticationService', ['logout']);
-  const companyBuilderServiceMock = jasmine.createSpyObj('CompanyBuilderService', ['setSelectedCompany'],
+  const companyHelperServiceMock = jasmine.createSpyObj('CompanyHelperService', ['setSelectedCompany'],
     { ['availableCompanies']: of(companies), ['selectedCompany']: of(companies[0]) });
 
   beforeEach(async () => {
@@ -28,7 +28,7 @@ describe('HeaderComponent', () => {
       imports: [ BrowserAnimationsModule, MatMenuModule, MatButtonModule, MatToolbarModule, MatIconModule ],
       providers: [
         { provide: AuthenticationService, useValue: authenticationServiceMock },
-        { provide: CompanyBuilderService, useValue: companyBuilderServiceMock }
+        { provide: CompanyHelperService, useValue: companyHelperServiceMock }
       ]
     })
     .compileComponents();
@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     authenticationServiceMock.logout.calls.reset();
-    companyBuilderServiceMock.setSelectedCompany.calls.reset();
+    companyHelperServiceMock.setSelectedCompany.calls.reset();
   });
 
   afterEach(() => {
@@ -72,8 +72,8 @@ describe('HeaderComponent', () => {
     companiesButtons[1].nativeElement.click();
 
     // Assert
-    expect(companyBuilderServiceMock.setSelectedCompany).toHaveBeenCalledTimes(1);
-    expect(companyBuilderServiceMock.setSelectedCompany).toHaveBeenCalledWith(companies[1]);
+    expect(companyHelperServiceMock.setSelectedCompany).toHaveBeenCalledTimes(1);
+    expect(companyHelperServiceMock.setSelectedCompany).toHaveBeenCalledWith(companies[1]);
   });
 
   it('should logout when the user clicks on the logout button', () => {

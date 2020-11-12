@@ -18,16 +18,20 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { LoginService } from './services/api/login.service';
 import { AuthenticationService } from './services/authentication.service';
 import { HeaderComponent } from './components/header/header.component';
-import { CompanyBuilderService } from './services/company-builder.service';
+import { CompanyHelperService } from './services/company-helper.service';
 import { ApiInterceptorService } from './interceptors/api-interceptor.service';
-import { AssetsAdapter } from './adapters/assets.adapter';
 import { CompanyService } from './services/api/company.service';
 import { AssetService } from './services/api/asset.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { AssetsListBuilder } from './services/assets-list-builder';
+import { AssetsListAdapter } from './adapters/assets-list.adapter';
+import { AssetAdapter } from './adapters/asset.adapter';
+import { UserAdapter } from './adapters/user.adapter';
+
 
 @NgModule({
   declarations: [
@@ -57,10 +61,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   providers: [
     LoginService,
     AuthenticationService,
-    CompanyBuilderService,
+    CompanyHelperService,
     CompanyService,
     AssetService,
-    AssetsAdapter,
+    AssetsListBuilder,
+    AssetsListAdapter,
+    AssetAdapter,
+    UserAdapter,
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptorService, multi: true }
   ],
   bootstrap: [AppComponent]
