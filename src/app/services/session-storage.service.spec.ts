@@ -1,10 +1,10 @@
-import { LocalStorageService } from './local-storage.service';
+import { SessionStorageService } from './session-storage.service';
 
-describe('LocalStorageService', () => {
-    let service: LocalStorageService;
+describe('SessionStorageService', () => {
+    let service: SessionStorageService;
 
     beforeEach(() => {
-        service = new LocalStorageService();
+        service = new SessionStorageService();
     });
 
     it('should set a new local storage item when adding data', () => {
@@ -12,14 +12,14 @@ describe('LocalStorageService', () => {
         const key = 'fake key';
         const item = 'fake item';
 
-        spyOn(localStorage, 'setItem');
+        spyOn(sessionStorage, 'setItem');
 
         // Act
         service.add(key, item);
 
         // Assert
-        expect(localStorage.setItem).toHaveBeenCalledTimes(1);
-        expect(localStorage.setItem).toHaveBeenCalledWith(key, item);
+        expect(sessionStorage.setItem).toHaveBeenCalledTimes(1);
+        expect(sessionStorage.setItem).toHaveBeenCalledWith(key, item);
     });
 
     it('should get an existing item from local storage when required', () => {
@@ -27,39 +27,39 @@ describe('LocalStorageService', () => {
         const key = 'fake key';
         const item = 'fake item';
 
-        spyOn(localStorage, 'getItem').and.returnValue(item);
+        spyOn(sessionStorage, 'getItem').and.returnValue(item);
 
         // Act
         const response = service.get(key);
 
         // Assert
         expect(response).toEqual(item);
-        expect(localStorage.getItem).toHaveBeenCalledTimes(1);
-        expect(localStorage.getItem).toHaveBeenCalledWith(key);
+        expect(sessionStorage.getItem).toHaveBeenCalledTimes(1);
+        expect(sessionStorage.getItem).toHaveBeenCalledWith(key);
     });
 
     it('should remove an existing item from local storage when not needed anymore', () => {
         // Arrange
         const key = 'fake key';
 
-        spyOn(localStorage, 'removeItem');
+        spyOn(sessionStorage, 'removeItem');
 
         // Act
         service.remove(key);
 
         // Assert
-        expect(localStorage.removeItem).toHaveBeenCalledTimes(1);
-        expect(localStorage.removeItem).toHaveBeenCalledWith(key);
+        expect(sessionStorage.removeItem).toHaveBeenCalledTimes(1);
+        expect(sessionStorage.removeItem).toHaveBeenCalledWith(key);
     });
 
     it('should clear local storage data when not needed anymore', () => {
         // Arrange
-        spyOn(localStorage, 'clear');
+        spyOn(sessionStorage, 'clear');
 
         // Act
         service.clear();
 
         // Assert
-        expect(localStorage.clear).toHaveBeenCalledTimes(1);
+        expect(sessionStorage.clear).toHaveBeenCalledTimes(1);
     });
 });

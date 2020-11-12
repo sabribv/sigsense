@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { LoginService } from './api/login.service';
-import { LocalStorageService } from './local-storage.service';
+import { SessionStorageService } from './session-storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { CompanyBuilderService } from './company-builder.service';
+import { CompanyHelperService } from './company-helper.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,9 +13,9 @@ export class AuthenticationService {
 
     constructor(
         private loginService: LoginService,
-        private localStorageService: LocalStorageService,
+        private sessionStorageService: SessionStorageService,
         private router: Router,
-        private companyBuilderService: CompanyBuilderService) {
+        private companyHelperService: CompanyHelperService) {
     }
 
     get authenticationStatus(): Observable<boolean> {
@@ -29,9 +29,9 @@ export class AuthenticationService {
 
     async login(email, password): Promise<void> {
         try {
-            const result = await this.loginService.login(email, password).toPromise();
-            this.localStorageService.add('token', result.token);
-            this.companyBuilderService.buildCompanies(result.roles);
+            const user = await this.loginService.login(email, password).toPromise();
+            this.sessionStorageService.add('token', user.token);
+            this.companyHelperService.setCompanies(user.companies);
             this.isAuthenticatedSubject.next(true);
             this.router.navigate(['assets']);
         } catch (err) {
@@ -41,7 +41,7 @@ export class AuthenticationService {
     }
 
     getToken(): string {
-        return this.localStorageService.get('token');
+        return this.sessionStorageService.get('token');
     }
 
     logout(): void {
@@ -50,8 +50,8 @@ export class AuthenticationService {
     }
 
     private clearAuthenticationData(): void {
-        this.localStorageService.clear();
+        this.sessionStorageService.clear();
         this.isAuthenticatedSubject.next(false);
-        this.companyBuilderService.buildCompanies([]);
+        this.companyHelperService.setCompanies([]);
     }
 }

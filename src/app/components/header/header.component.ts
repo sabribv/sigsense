@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { CompanyBuilderService } from 'src/app/services/company-builder.service';
+import { CompanyHelperService } from 'src/app/services/company-helper.service';
 
 @Component({
   selector: 'app-header',
@@ -15,21 +15,21 @@ private subscriptions: Subscription[] = [];
 
 constructor(
   private authenticationService: AuthenticationService,
-  private companyBuilderService: CompanyBuilderService
+  private companyHelperService: CompanyHelperService
   ) {}
 
   ngOnInit(): void {
-    this.subscriptions.push(this.companyBuilderService.availableCompanies.subscribe(companies => {
+    this.subscriptions.push(this.companyHelperService.availableCompanies.subscribe(companies => {
       this.companies = companies;
     }));
 
-    this.subscriptions.push(this.companyBuilderService.selectedCompany.subscribe(company => {
+    this.subscriptions.push(this.companyHelperService.selectedCompany.subscribe(company => {
       this.selectedCompany = company;
     }));
   }
 
   onCompanyChange(company): void {
-    this.companyBuilderService.setSelectedCompany(company);
+    this.companyHelperService.setSelectedCompany(company);
   }
 
   onLogout(): void {

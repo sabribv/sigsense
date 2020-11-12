@@ -1,22 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Company } from '../models/company';
-import { LocalStorageService } from './local-storage.service';
+import { SessionStorageService } from './session-storage.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CompanyBuilderService {
+export class CompanyHelperService {
     private companiesSubject = new BehaviorSubject<Company[]>([]);
     private selectedCompanySubject = new BehaviorSubject<Company>(undefined);
 
-    constructor(private localStorageSerive: LocalStorageService) {
-        const metadata = this.localStorageSerive.get('metadata');
+    constructor(private sessionStorageService: SessionStorageService) {
+        const metadata = this.sessionStorageService.get('metadata');
         if (metadata) {
             const companies = JSON.parse(atob(metadata));
-            if (!!companies) {
-                this.setAvailableCompanies(companies);
-            }
+            this.setAvailableCompanies(companies);
         }
     }
 
@@ -28,15 +26,7 @@ export class CompanyBuilderService {
         return this.selectedCompanySubject.asObservable();
     }
 
-    buildCompanies(roles): void {
-        const companies = roles.map(role => {
-            return {
-                id: role.companyId,
-                name: role.companyName,
-                dashboards: role.Dashboards.map(dashboard => dashboard.replace(/^\w/, (character) => character.toUpperCase()))
-            } as Company;
-        }).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-
+    setCompanies(companies: Company[]): void {
         this.setAvailableCompanies(companies);
     }
 
@@ -45,7 +35,7 @@ export class CompanyBuilderService {
     }
 
     private setAvailableCompanies(companies: Company[]): void {
-        this.localStorageSerive.add('metadata', btoa(JSON.stringify(companies)));
+        this.sessionStorageService.add('metadata', btoa(JSON.stringify(companies)));
         this.companiesSubject.next(companies);
 
         if (companies.length) {

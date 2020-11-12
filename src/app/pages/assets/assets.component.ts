@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AssetsAdapter } from 'src/app/adapters/assets.adapter';
 import { AssetsList } from 'src/app/models/asset';
-import { CompanyBuilderService } from 'src/app/services/company-builder.service';
+import { AssetsListBuilder } from 'src/app/services/assets-list-builder';
+import { CompanyHelperService } from 'src/app/services/company-helper.service';
 
 enum dataStatus {
   loading,
@@ -25,10 +25,10 @@ export class AssetsComponent implements OnInit, OnDestroy {
   private companyId;
   private subscription: Subscription;
 
-  constructor(private companyBuilderService: CompanyBuilderService, private assetsAdapter: AssetsAdapter) { }
+  constructor(private companyHelperService: CompanyHelperService, private assetsListBuilder: AssetsListBuilder) { }
 
   ngOnInit(): void {
-    this.subscription = this.companyBuilderService.selectedCompany.subscribe(company => {
+    this.subscription = this.companyHelperService.selectedCompany.subscribe(company => {
       this.companyId = company.id;
       this.getAssets();
     });
@@ -43,7 +43,7 @@ export class AssetsComponent implements OnInit, OnDestroy {
   async getAssets(href = null): Promise<void> {
     try {
       this.currentStatus = dataStatus.loading;
-      this.assetsList = await this.assetsAdapter.getCompanyAssets(this.companyId, href);
+      this.assetsList = await this.assetsListBuilder.getAssetsList(this.companyId, href);
       this.currentStatus = this.assetsList.assets.length ? dataStatus.ready : dataStatus.empty;
     } catch {
       this.currentStatus = dataStatus.error;

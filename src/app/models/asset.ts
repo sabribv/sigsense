@@ -1,8 +1,11 @@
+import { Observable } from 'rxjs';
+
 export interface Asset {
+    href: string;
     name: string;
     description: string;
     manufacturer: string;
-    image: any;
+    image: Observable<any>;
 }
 
 export interface AssetsList {
